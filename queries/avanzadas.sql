@@ -16,6 +16,8 @@ BEGIN
         
 	END IF;
     END$$
+	DELIMITER ;
+
 
 -- Obtener la edad de un cliente
       
