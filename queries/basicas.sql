@@ -65,10 +65,4 @@ join clases c using (clase_id)
 group by c.clase_id, c.nombre_clase
 having count(*) > 2;
 
--- Listar clientes nacidos después de 1990 y a qué clases están apuntados.
 
-select cli.nombre, cli.apellido, cli.fecha_nacimiento, c.nombre_clase
-from inscripciones
-join clases c using (clase_id)
-join clientes cli using (cliente_id)
-where YEAR(fecha_nacimiento) > 1990;
