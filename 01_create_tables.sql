@@ -2,7 +2,7 @@
 CREATE DATABASE gimnasio;
 USE gimnasio;
 
--- 2. CREACIÓN DE TABLAS
+-- 1. CREACIÓN DE TABLAS
 CREATE TABLE clientes (
     cliente_id INT PRIMARY KEY AUTO_INCREMENT,
     nombre VARCHAR(100),
