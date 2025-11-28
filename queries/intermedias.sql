@@ -21,3 +21,11 @@ from inscripciones
 join clases c using (clase_id)
 join clientes cli using (cliente_id)
 where YEAR(fecha_nacimiento) > 1990;
+
+                        
+-- Listar todos los clientes y cuánto han pagado en total.
+
+select c.nombre, c.apellido, COALESCE(SUM(p.monto), 0) AS total_pagado
+from clientes c
+left join pagos p using (cliente_id)
+group by cliente_id, c.nombre, c.apellido;
