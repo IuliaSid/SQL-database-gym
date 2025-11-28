@@ -47,7 +47,7 @@ DETERMINISTIC
 BEGIN
 DECLARE v_total DECIMAL(10,2);
 			
-            SELECT coalesce((monto),0) into v_total
+            SELECT coalesce(sum(monto),0) into v_total
             FROM pagos
             where cliente_id = p_cliente_id;        
            
