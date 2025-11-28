@@ -1,4 +1,24 @@
--- Antes de insertar en inscripciones, revisa si ese cliente ya está inscrito a esa clase.
+
+-- ---------------------------------------------------------------
+-- TRIGGER: tr_prevenir_duplicados
+-- OBJETIVO:
+--     Evita que un cliente se inscriba dos veces a la misma clase.
+--
+-- POR QUÉ EXISTE:
+--     Garantiza la integridad del negocio asegurando que un cliente
+--     no pueda generar inscripciones duplicadas.
+--
+-- CÓMO FUNCIONA:
+--     Antes de insertar un registro en la tabla "inscripciones",
+--     el trigger verifica si ya existe una inscripción con el mismo
+--     cliente_id y clase_id. Si existe, interrumpe la operación y 
+--     lanza un error personalizado con SQLSTATE 45000.
+--
+-- CÓMO SE USA:
+--     Se activa automáticamente cuando se ejecuta:
+--         INSERT INTO inscripciones (...)
+--     No requiere acciones adicionales por parte del usuario.
+-- ---------------------------------------------------------------
 
 DELIMITER $$
 
@@ -18,8 +38,24 @@ BEGIN
     END$$
 	DELIMITER ;
 
-
--- Obtener la edad de un cliente
+-- ---------------------------------------------------------------
+-- FUNCIÓN: f_edad_cliente
+-- OBJETIVO:
+--     Calcular la edad actual de un cliente a partir de su fecha
+--     de nacimiento almacenada en la tabla "clientes".
+--
+-- POR QUÉ EXISTE:
+--     Permite obtener la edad de un cliente sin repetir lógica en
+--     consultas. Centraliza el cálculo y garantiza precisión y consistencia.
+--
+-- CÓMO FUNCIONA:
+--     Utiliza TIMESTAMPDIFF para calcular los años entre 
+--     fecha_nacimiento y la fecha actual (CURDATE()).
+--
+-- CÓMO SE USA:
+--     SELECT f_edad_cliente(5);
+--     Retorna un número entero con la edad del cliente.
+-- ---------------------------------------------------------------
       
 DELIMITER $$
 
@@ -39,7 +75,24 @@ DELIMITER ;
 
 select f_edad_cliente(5)
 
--- total pagado por un cliente
+-- ---------------------------------------------------------------
+-- FUNCIÓN: fn_total_pagado
+-- OBJETIVO:
+--     Calcular el total de dinero pagado por un cliente.
+--
+-- POR QUÉ EXISTE:
+--     Muchas consultas del sistema requieren conocer cuánto ha pagado
+--     un cliente (para reportes, deudas, historial, etc). Centralizar
+--     este cálculo evita duplicar lógica y posibles errores.
+--
+-- CÓMO FUNCIONA:
+--     Suma todos los pagos asociados a un cliente en la tabla "pagos".
+--     Si el cliente no tiene pagos, retorna 0 mediante COALESCE.
+--
+-- CÓMO SE USA:
+--     SELECT fn_total_pagado(8);
+--     Devuelve un DECIMAL(10,2) con el total abonado.
+-- ---------------------------------------------------------------
   
 DELIMITER $$
 
@@ -60,7 +113,26 @@ DELIMITER ;
 
 select fn_total_pagado(8)
 
--- Procedimiento: inscribir cliente
+-- ---------------------------------------------------------------
+-- PROCEDIMIENTO: sp_inscribir_cliente
+-- OBJETIVO:
+--     Inscribir un cliente a una clase de forma segura,
+--     evitando duplicados y registrando la fecha de inscripción.
+--
+-- POR QUÉ EXISTE:
+--     Permite encapsular todo el proceso de inscripción en una
+--     sola operación controlada, reduciendo errores y asegurando
+--     que el sistema siempre valide antes de insertar.
+--
+-- CÓMO FUNCIONA:
+--     1. Verifica si el cliente ya está inscrito a la clase.
+--        - Si ya está inscrito: lanza un error con SQLSTATE 45000.
+--     2. Si pasa la validación, inserta la inscripción con la fecha actual.
+--
+-- CÓMO SE USA:
+--     CALL sp_inscribir_cliente(1, 8);
+--     Inserta una inscripción si es válida o lanza un error si no lo es.
+-- ---------------------------------------------------------------
 	
 DELIMITER $$
 CREATE PROCEDURE sp_inscribir_cliente ( IN p_cliente_id INT, IN p_clase_id INT)
