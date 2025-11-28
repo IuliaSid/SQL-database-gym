@@ -13,6 +13,14 @@ FROM clientes c
 LEFT JOIN inscripciones i USING (cliente_id)
 WHERE i.cliente_id IS NULL;
 
+-- Mostrar cuánto dinero ha generado cada clase.
+
+select sum(p.monto), nombre_clase
+from pagos p
+join inscripciones using (cliente_id)
+join clases c using (clase_id)
+group by clase_id, nombre_clase
+
 
 -- Listar clientes nacidos después de 1990 y a qué clases están apuntados.
 
