@@ -57,3 +57,25 @@ DELIMITER ;
 
 
 select fn_total_pagado(8)
+
+-- Procedimiento: inscribir cliente
+	
+DELIMITER $$
+CREATE PROCEDURE sp_inscribir_cliente ( IN p_cliente_id INT, IN p_clase_id INT)
+BEGIN
+		     IF EXISTS ( SELECT 1 
+						FROM inscripciones
+						where cliente_id = p_cliente_id and 
+						clase_id = p_clase_id) then
+                        
+	SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'EL cliente ya esta inscrito.';
+    END IF;
+    
+    INSERT INTO inscripciones (cliente_id, clase_id, fecha_inscripcion) VALUES (p_cliente_id, p_clase_id, curdate());    
+    
+
+END $$
+DELIMITER ;
+
+call sp_inscribir_cliente( 1,8)
