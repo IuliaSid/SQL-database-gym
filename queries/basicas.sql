@@ -19,31 +19,9 @@ select c.clase_id, c.nombre_clase, count(i.cliente_id) as inscritos
 from clases c
 join inscripciones i using(clase_id)
 group by c.clase_id, c.nombre_clase;
-
--- Mostrar los monitores que NO tienen clases asignadas.
-
-select m.nombre, m.apellido
-from monitores m
-WHERE m.monitor_id NOT IN (
-    SELECT DISTINCT monitor_id FROM clases WHERE monitor_id IS NOT NULL
-);
-
--- Ver los clientes que NO tienen inscripciones.
-
-SELECT c.nombre, c.apellido
-FROM clientes c
-LEFT JOIN inscripciones i USING (cliente_id)
-WHERE i.cliente_id IS NULL;
                          
--- Listar todos los clientes y cuánto han pagado en total.
-
-select c.nombre, c.apellido, COALESCE(SUM(p.monto), 0) AS total_pagado
-from clientes c
-left join pagos p using (cliente_id)
-group by cliente_id, c.nombre, c.apellido;
 
 -- Mostrar los clientes que han realizado más de 1 pago.
-
 select c.nombre, count(*) as pago
 from pagos p
 join clientes c using (cliente_id)
@@ -51,7 +29,6 @@ group by c.cliente_id, c.nombre
 having count(*) > 1;
 
 -- Obtener qué cuota (mensual, trimestral…) se ha pagado más veces.
-
 select cuota_id, c.frecuencia, count(*) as veces
 from cuotas c
 join pagos using (cuota_id)
